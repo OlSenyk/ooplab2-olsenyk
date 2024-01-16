@@ -1,0 +1,74 @@
+#include<iostream>
+
+int main() {
+    int a, b, c, d;
+
+    std::cout << "Введіть значення a: ";
+    std::cin >> a;
+
+    std::cout << "Введіть значення b: ";
+    std::cin >> b;
+
+    std::cout << "Введіть значення c: ";
+    std::cin >> c;
+
+    std::cout << "Введіть значення d: ";
+    std::cin >> d;
+
+    int result = (18*a + (312*d >> 9)) - (b << 7) + (c << 7);
+    std::cout << "Результат: " << result << std::endl;
+
+    return 0;
+}
+
+-----------------------
+#include <iostream>
+#include <vector>
+#include <bitset>
+
+// Функція для отримання біта парності
+unsigned short parity(unsigned short n) {
+    unsigned short parity = 0;
+    while (n) {
+        parity = !parity;
+        n = n & (n - 1);
+    }
+    return parity;
+}
+
+int main() {
+    std::vector<std::string> text(16, std::string(4, ' ')); // Заданий текст
+
+    // Доповнення пробілами до 16 символів
+    for (auto& str : text) {
+        str.append(16 - str.size(), ' ');
+    }
+
+    // Шифрування тексту
+    std::vector<unsigned short> encrypted_text;
+    for (int i = 0; i < text.size(); ++i) {
+        for (int j = 0; j < text[i].size(); ++j) {
+            unsigned short row = i & 0xF; // Номер рядка символу
+            unsigned short ascii = text[i][j]; // ASCII-код символу
+            unsigned short lower_ascii = ascii & 0xF; // Молодша частина ASCII-коду символу
+            unsigned short upper_ascii = (ascii >> 4) & 0xF; // Старша частина ASCII-коду символу
+            unsigned short position = j & 0x3; // Позиція символу в рядку
+
+            unsigned short first_half = (row << 4) | lower_ascii;
+            unsigned short second_half = (upper_ascii << 2) | position;
+
+            unsigned short encrypted_char = (first_half << 8) | second_half;
+            encrypted_char |= (parity(first_half) << 7);
+            encrypted_char |= (parity(second_half) << 15);
+
+            encrypted_text.push_back(encrypted_char);
+        }
+    }
+
+    // Виведення зашифрованого тексту
+    for (const auto& ch : encrypted_text) {
+        std::cout << std::bitset<16>(ch) << std::endl;
+    }
+
+    return 0;
+}
